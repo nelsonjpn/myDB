@@ -32,7 +32,7 @@ class EmailTable(Table):
     email_address = Col('email_address')
 
 
-# Declare your table
+# Declare your Users table
 class UserTable(Table):
     UserID = Col('UserID')
     username = Col('username')
@@ -47,47 +47,46 @@ class User(object):
         self.password = password
 
 
+# Declare emails database model
 class Emails(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
     email_address = db.Column(db.String(255), unique=True, nullable=False)
 
 
+# declare phone numbers database model
 class PhoneNumbers(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
     phone_number = db.Column(db.String(255), unique=True, nullable=False)
 
 
+# fill the emails table object
 emails = Emails.query.all()
 emailTable = EmailTable(emails)
 
 
+# fill the phone numbers table object
 phone_numbers = PhoneNumbers.query.all()
 pnTable = PNTable(phone_numbers)
 
 
+# declare the users database
 class Users(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), unique=True, nullable=False)
 
 
+# fill the Users table
 users = Users.query.all()
 table = UserTable(users)
 for user in users:
     print(str(user.UserID) + ' ' + user.username + ' ' + user.password)
 
 
-
-# connects default URL of server to render home.html
-# @app.route('/')
-# def home_route():
-#    return render_template("home.html")
-
-
 # connects / path of server to render PaulN.html
 @app.route('/', methods=["GET", "POST"])
 def hello_route():
-    # user = Users.query.filter_by(UserID=1).first()
+    # if the form has been sent back, add the data to the database
     if request.form:
         print("UserID: " + str(request.form.get("ID")))
         email = Emails(email_address=request.form.get("email"), UserID=request.form.get("ID"))
@@ -100,11 +99,13 @@ def hello_route():
     return render_template("PaulN.html", table=table)
 
 
+# if input url used, use the input html
 @app.route('/input/')
 def input_route():
     return render_template("Input.html")
 
 
+# if email url, show the email table
 @app.route('/emails/')
 def emails_route():
     # user = Users.query.filter_by(UserID=1).first()
@@ -112,6 +113,7 @@ def emails_route():
     return render_template("PaulN.html", table=emailTable)
 
 
+# if phones url, shjow phones table
 @app.route('/phones/')
 def phones_route():
     # user = Users.query.filter_by(UserID=1).first()
