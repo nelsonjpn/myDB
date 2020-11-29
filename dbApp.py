@@ -100,6 +100,11 @@ def hello_route():
     return render_template("PaulN.html", table=table)
 
 
+@app.route('/input/')
+def input_route():
+    return render_template("Input.html")
+
+
 @app.route('/emails/')
 def emails_route():
     # user = Users.query.filter_by(UserID=1).first()
