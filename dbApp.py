@@ -91,9 +91,9 @@ def hello_route():
     if request.form:
         print("UserID: " + str(request.form.get("ID")))
         email = Emails(email_address=request.form.get("email"), UserID=request.form.get("ID"))
-        phone_number = PhoneNumbers(phone_number=request.form.get("phone_number"), UserID=request.form.get("ID"))
         session.add(email)
         session.commit()
+        phone_number = PhoneNumbers(phone_number=request.form.get("phone_number"), UserID=request.form.get("ID"))
         session.add(phone_number)
         session.commit()
     print("Home")
