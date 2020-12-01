@@ -47,6 +47,18 @@ class User(object):
         self.password = password
 
 
+# Declare email input model
+class inputEmail(db.Model):
+    UserID = db.Column(db.Integer, primary_key=True)
+    email_address = db.Column(db.String(255), unique=True, nullable=False)
+
+
+# Declare phone input model
+class inputPhone(db.Model):
+    UserID = db.Column(db.Integer, primary_key=True)
+    phone_number = db.Column(db.String(255), unique=True, nullable=False)
+
+
 # Declare emails database model
 class Emails(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
@@ -59,16 +71,6 @@ class PhoneNumbers(db.Model):
     phone_number = db.Column(db.String(255), unique=True, nullable=False)
 
 
-# fill the emails table object
-emails = Emails.query.all()
-emailTable = EmailTable(emails)
-
-
-# fill the phone numbers table object
-phone_numbers = PhoneNumbers.query.all()
-pnTable = PNTable(phone_numbers)
-
-
 # declare the users database
 class Users(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
@@ -76,17 +78,26 @@ class Users(db.Model):
     password = db.Column(db.String(255), unique=True, nullable=False)
 
 
-# fill the Users table
-users = Users.query.all()
-table = UserTable(users)
-for user in users:
-    print(str(user.UserID) + ' ' + user.username + ' ' + user.password)
-
-
 # connects / path of server to render PaulN.html
-@app.route('/', methods=["GET", "POST"])
+@app.route('/')
 def hello_route():
+    return render_template("PaulN.html")
+
+# Users Route
+@app.route('/users/')
+def users_route():
     # if the form has been sent back, add the data to the database
+    # fill the Users table
+    users = Users.query.all()
+    table = UserTable(users)
+    for user in users:
+        print(str(user.UserID) + ' ' + user.username + ' ' + user.password)
+    return render_template("PaulN.html" , table=table)
+
+
+# if input url used, use the input html
+@app.route('/input/')
+def input_route():
     if request.form:
         print("UserID: " + str(request.form.get("ID")))
         email = Emails(email_address=request.form.get("email"), UserID=request.form.get("ID"))
@@ -95,14 +106,7 @@ def hello_route():
         phone_number = PhoneNumbers(phone_number=request.form.get("phone_number"), UserID=request.form.get("ID"))
         session.add(phone_number)
         session.commit()
-    print("Home")
-    return render_template("PaulN.html", table=table)
-
-
-# if input url used, use the input html
-@app.route('/input/')
-def input_route():
-    return render_template("Input.html")
+    return render_template("PaulN.html")
 
 
 # if email url, show the email table
@@ -110,6 +114,9 @@ def input_route():
 def emails_route():
     # user = Users.query.filter_by(UserID=1).first()
     print("Emails")
+    # fill the emails table object
+    emails = Emails.query.all()
+    emailTable = EmailTable(emails)
     return render_template("PaulN.html", table=emailTable)
 
 
@@ -118,7 +125,10 @@ def emails_route():
 def phones_route():
     # user = Users.query.filter_by(UserID=1).first()
     print("Phone Numbers")
-    return render_template("PaulN.html", table=pnTable)
+    # fill the phone numbers table object
+    phone_numbers = PhoneNumbers.query.all()
+    pntable = PNTable(phone_numbers)
+    return render_template("PaulN.html", table=pntable)
 
 
 if __name__ == "__main__":
